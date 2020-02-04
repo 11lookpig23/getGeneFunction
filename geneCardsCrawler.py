@@ -7,7 +7,7 @@ from requests import RequestException, Timeout
 from bs4 import BeautifulSoup
 import pandas as pd
 import xlrd
- 
+import re
 
 def get_page(url, timeout=40):
     """ download html according to an url """
@@ -30,6 +30,7 @@ def get_page(url, timeout=40):
 def parse(html_doc):
     soup = BeautifulSoup(html_doc, 'html.parser')
     funcli = soup.find_all(id="function")
+    print(funcli)
     try:
         functext = funcli[0]
         functext = str(functext.dd)
@@ -51,10 +52,10 @@ def getGeneName(name = "gene.xlsx"):
 if __name__ == "__main__":
     genelist = getGeneName("gene.xlsx")
     funcdict = {}
-    for genename in genelist[10:]:
+    for genename in genelist:
         url1 = 'https://www.genecards.org/cgi-bin/carddisp.pl?gene='+genename
         html_doc = get_page(url1)
         functions = parse(html_doc)
         funcdict[genename] = functions
     funcPD = pd.Series(funcdict)
-    funcPD.to_csv("expResult.csv")
+    funcPD.to_csv("FuncResult.csv")
